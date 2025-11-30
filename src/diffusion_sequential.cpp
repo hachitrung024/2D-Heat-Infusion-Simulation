@@ -7,20 +7,43 @@ static const double K[3][3] = {
 };
 
 void run_sequential(Matrix& grid, int steps) {
+    if (grid.empty() || grid[0].empty()) return;
+    
     int rows = grid.size();
     int cols = grid[0].size();
-    Matrix new_grid = grid;
+    // Create a new matrix of the same size to store temporary results
+    Matrix new_grid(rows, std::vector<double>(cols)); 
 
+    // Main loop: Perform STEPS iterations
     for (int s = 0; s < steps; ++s) {
-        for (int i = 1; i < rows - 1; ++i) {
-            for (int j = 1; j < cols - 1; ++j) {
-                double val = 0.0;
-                for (int ki = -1; ki <= 1; ++ki)
-                    for (int kj = -1; kj <= 1; ++kj)
-                        val += grid[i + ki][j + kj] * K[ki + 1][kj + 1];
-                new_grid[i][j] = val;
+        
+        // Loop through all cells including boundaries
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                double new_val = 0.0;
+                
+                // Loop through the 3x3 kernel
+                for (int ki = -1; ki <= 1; ++ki) {
+                    for (int kj = -1; kj <= 1; ++kj) {
+                        
+                        int ni = i + ki;
+                        int nj = j + kj;
+                        double current_temp;
+
+                        // Boundary check (padding logic)
+                        if (ni < 0 || ni >= rows || nj < 0 || nj >= cols) {
+                            current_temp = PADDING_VALUE;
+                        } else {
+                            current_temp = grid[ni][nj];
+                        }
+
+                        new_val += current_temp * K[ki + 1][kj + 1];
+                    }
+                }
+                new_grid[i][j] = new_val;
             }
         }
-        grid.swap(new_grid);
+        // Swap matrices: current step result becomes input for next step
+        grid.swap(new_grid); 
     }
 }

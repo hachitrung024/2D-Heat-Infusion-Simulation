@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 #include <iostream>
-#include <iomanip>  // thêm thư viện này để setprecision
+#include <iomanip>
 
 using Matrix = std::vector<std::vector<double>>;
 
@@ -37,7 +37,7 @@ inline void save_csv(const std::string& filename, const Matrix& data) {
         return;
     }
 
-    file << std::fixed << std::setprecision(2);  // luôn ghi 2 chữ số sau dấu phẩy
+    file << std::fixed << std::setprecision(2); 
 
     for (const auto& row : data) {
         for (size_t j = 0; j < row.size(); ++j) {
